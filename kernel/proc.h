@@ -95,9 +95,16 @@ struct proc {
   // wait_lock must be held when using this:
   struct proc *parent;         // Parent process
 
+  // for thread
+  struct proc *mainthread;     // main thread
+  int tid;                     // thread id in a process
+  int tcnt;                    // to create tid
+  void *raw_stack;             // not aligned stack addr   
+
   // these are private to the process, so p->lock need not be held.
   uint64 kstack;               // Virtual address of kernel stack
   uint64 sz;                   // Size of process memory (bytes)
+  uint64 *sz_ptr;               // pointer of Size of main thread memory
   pagetable_t pagetable;       // User page table
   uint64 trapframe_va;         // virtual address of the trapframe
   struct trapframe *trapframe; // data page for trampoline.S

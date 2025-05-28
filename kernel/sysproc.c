@@ -42,7 +42,8 @@ sys_sbrk(void)
   int n;
 
   argint(0, &n);
-  addr = myproc()->sz;
+  addr = *(myproc()->sz_ptr);
+  
   if(growproc(n) < 0)
     return -1;
   return addr;
@@ -90,4 +91,27 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+uint64
+sys_clone(void)
+{
+  uint64 fcn, arg1, arg2, stack;
+
+  argaddr(0, &fcn);
+  argaddr(1, &arg1);
+  argaddr(2, &arg2);
+  argaddr(3, &stack);
+
+  return clone((void (*)(void*, void*))fcn, (void*)arg1, (void*)arg2, (void*)stack);
+}
+
+uint64
+sys_join(void)
+{
+  uint64 stack;
+
+  argaddr(0, &stack);
+
+  return join((void **)stack);
 }
